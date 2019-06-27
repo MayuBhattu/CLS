@@ -73,7 +73,7 @@ print("Ncontrol = ", Ncontrol, "CONTROL_STEP", CONTROL_STEP)
 m_sgp_output_i = m_sgp_output_temp_i[init:(init+Nmodel),:].copy()
 m_si_output_b = m_si_output_temp_b[init:(init+Nmodel),:].copy()
 m_light_output = m_light_output_temp[init:(init+Nmodel),:].copy()
-m_magnetic_field_i = m_magnetic_field_temp_i[(init-1):(init+Nmodel)+30,:].copy() #changed : added +1 (30)
+m_magnetic_field_i = m_magnetic_field_temp_i[(init-1):(init+Nmodel)+30,:].copy() #changed : added +1 
 print (Nmodel ,'Simulation for ' ,MODEL_STEP*(Nmodel-1),'seconds')
 
 #initialize empty matrices which will be needed in this simulation
