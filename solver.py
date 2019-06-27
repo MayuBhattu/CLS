@@ -1,4 +1,6 @@
 import numpy as np
+import frames as fs
+from constants_1U import v_w_IO_o
 
 def updateStateTimeRK4(sat,f,h): #This is Runge Kutta-4 solver for ordinary differential equation.
 	'''
@@ -9,7 +11,7 @@ def updateStateTimeRK4(sat,f,h): #This is Runge Kutta-4 solver for ordinary diff
 		It sets the value of state at next time (after a time step of h) (x(t+h)) using f and 
 		value of state at current time (x(t)) and also updates the value of time.
 	'''
-	v_state_error_0 = sat.getState()	#state at t = t0	
+	v_state_error_0 = np.hstack((sat.getQ_BI(),sat.getW_BI_b()))	#state at t = t0	
 	t = sat.getTime() 
 
 	#checking whether the f is a proper function or not
@@ -17,8 +19,10 @@ def updateStateTimeRK4(sat,f,h): #This is Runge Kutta-4 solver for ordinary diff
 		print ("Error: derivative of state is not proper")
 		return
 	#rk-4 routine (updating satellite class state with obtained state at every step of rk4 routine)
+	sat.setState( v_state_error_0)
 	#first step of rk4 routine
 	k1 = h*f(sat)
+
 	#seccdond step of rk4 routine
 	v_state_error_1 = v_state_error_0+0.5*k1
 	sat.setTime(t+0.5*h)
@@ -44,7 +48,15 @@ def updateStateTimeRK4(sat,f,h): #This is Runge Kutta-4 solver for ordinary diff
 	
 	if v_state_error_new[3] < 0. :
 		v_state_error_new[0:4] = -v_state_error_new[0:4].copy()
+	
+	v_pos_i = sat.getPos()
+	v_vel_i = sat.getVel()
+	v_q_BO = fs.qBI2qBO(v_state_error_new[0:4],v_pos_i,v_vel_i)
+	v_w_BI_b = v_state_error_new[4:7]
+	
+	wBOb = fs.wBIb2wBOb(v_w_BI_b,v_q_BO,v_w_IO_o)
+	v_state_error_new = np.hstack ((v_q_BO, wBOb))
 	sat.setState(v_state_error_new.copy())
 	#print("statek+1" ,v_state_error_new)
 	#print('\n')
-	return
+	return 

@@ -17,18 +17,18 @@ def x_dot_BO(sat):    #need m_INERTIA (abot center of mass)
     v_torque_b = v_torque_control_b + v_torque_dist_b
     
     #get current state
-    v_q_BO = sat.getQ_BO()  #unit quaternion rotating from orbit to body 
-    v_w_BO_b = sat.getW_BO_b()  #angular velocity of body frame wrt orbit frame in body frame
-    R = quat2rotm(v_q_BO)
+    v_q_BI = sat.getQ_BO()  #unit quaternion rotating from orbit to body 
+    v_w_BI_b = sat.getW_BO_b()  #angular velocity of body frame wrt orbit frame in body frame
+
     #Kinematic equation
     #print(v_q_BO)
     #print(v_w_BO_b)
-    v_q_BO_dot = quatDerBO(v_q_BO,v_w_BO_b)   
-    v_w_BI_b = frames.wBOb2wBIb(v_w_BO_b,v_q_BO,v_w_IO_o)
+    v_q_BI_dot = quatDerBO(v_q_BI,v_w_BI_b)   
+   # v_w_BI_b = frames.wBOb2wBIb(v_w_BO_b,v_q_BO,v_w_IO_o)
     v_w_OI_o = -v_w_IO_o.copy()
 
     #Dynamic equation - Euler equation of motion
-    v_w_BO_b_dot = np.dot(m_INERTIA_inv,v_torque_b - np.cross(v_w_BI_b,np.dot(m_INERTIA,v_w_BI_b))) - np.cross ( np.dot(R, v_w_OI_o), v_w_BO_b)     
-    v_x_dot = np.hstack((v_q_BO_dot,v_w_BO_b_dot))
+    v_w_BI_b_dot = np.dot(m_INERTIA_inv,v_torque_b - np.cross(v_w_BI_b,np.dot(m_INERTIA,v_w_BI_b)))# - np.dot(R, (np.cross(v_w_BO_b, v_w_OI_o)))     
+    v_x_dot = np.hstack((v_q_BI_dot,v_w_BI_b_dot))
     #print(v_x_dot)
-    return v_x_dot 
+    return v_x_dot   
